@@ -13,11 +13,12 @@ VALUES ('Salesperson', 80000, 1),
        ('Legal Team Lead', 250000, 4),
        ('Lawyer', 190000, 4);
 
+
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ('Mike', 'Chan', 1, ),
-       ('Ashley', 'Rodriguez', 2),
-       ('Kevin', 'Tupik', 3, ),
-       ('Kunal', 'Singh', 4),
-       ('Malia', 'Brown', 5, ),
-       ('Sarah', 'Lourd', 6),
-       ('Tom', 'Allen', 7, );         
+VALUES ('Mike', 'Chan', 1, 1),
+       ('Ashley', 'Rodriguez', 2, NULL),
+       ('Kevin', 'Tupik', 3, 2),
+       ('Kunal', 'Singh', 4, NULL),
+       ('Malia', 'Brown', 5, 3),
+       ('Sarah', 'Lourd', 6, NULL),
+       ('Tom', 'Allen', 7, 4);         
