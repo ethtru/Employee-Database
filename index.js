@@ -5,9 +5,7 @@ require("console.table");
 const db = mysql.createConnection(
   {
     host: "localhost",
-    // MySQL username,
     user: "root",
-    // TODO: Add MySQL password
     password: "Rivers22!",
     database: "employees_db",
   },
@@ -48,6 +46,8 @@ function showPrompts() {
         viewAllEmployees();
       } else if (answer.userChoice === "add an employee") {
         addEmployee();
+      } else if (answer.userChoice === "update an employee role") {
+        updateEmployeeRole();
       }
     });
 }
@@ -145,4 +145,46 @@ async function addEmployee() {
       [first_name, last_name, role_id, manager_id]
     );
   viewAllEmployees();
+}
+
+async function updateEmployeeRole() {
+  try {
+    const [employeeList] = await db
+      .promise()
+      .query(
+        "SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM employee"
+      );
+
+    const { userChoice, newRole } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "userChoice",
+        message: "Which employee's role do you want to update?",
+        choices: employeeList.map((employee) => employee.full_name),
+      },
+      {
+        type: "input",
+        name: "newRole",
+        message: "Enter the new role:",
+      },
+    ]);
+
+    const [role] = await db
+      .promise()
+      .query("SELECT id FROM role WHERE title = ?", [newRole]);
+
+    if (role.length === 0) {
+      console.error(`Role "${newRole}" does not exist.`);
+      return;
+    }
+
+    const query = `UPDATE employee SET role_id = ? WHERE CONCAT(first_name, ' ', last_name) = ?`;
+    await db.promise().query(query, [role[0].id, userChoice]);
+
+    console.log("Employee role updated successfully!");
+  } catch (error) {
+    console.error("Error updating employee role:", error);
+  } finally {
+    db.end();
+  }
 }
