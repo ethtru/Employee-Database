@@ -40,6 +40,10 @@ function showPrompts() {
         viewAllDepartements();
       } else if (answer.userChoice === "add a department") {
         addDepartement();
+      } else if (answer.userChoice === "view all roles") {
+        viewAllRoles();
+      } else if (answer.userChoice === "add a role") {
+        addRole();
       }
     });
 }
@@ -63,3 +67,37 @@ async function addDepartement() {
   viewAllDepartements();
 }
 showPrompts();
+
+async function viewAllRoles() {
+  const [roles] = await db.promise().query("select * from role");
+  console.table(roles);
+  showPrompts();
+}
+async function addRole() {
+  const { title, salary, department_id } = await inquirer.prompt([
+    {
+      type: "input",
+      name: "title",
+      message: "Please enter the title for the role you would like to add",
+    },
+    {
+      type: "input",
+      name: "salary",
+      message: "Please enter the salary for the role",
+    },
+    {
+      type: "input",
+      name: "department_id",
+      message: "Please enter the department id for the role",
+    },
+  ]);
+
+  await db
+    .promise()
+    .query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [
+      title,
+      salary,
+      department_id,
+    ]);
+  viewAllRoles();
+}
