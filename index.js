@@ -44,6 +44,10 @@ function showPrompts() {
         viewAllRoles();
       } else if (answer.userChoice === "add a role") {
         addRole();
+      } else if (answer.userChoice === "view all employees") {
+        viewAllEmployees();
+      } else if (answer.userChoice === "add an employee") {
+        addEmployee();
       }
     });
 }
@@ -100,4 +104,45 @@ async function addRole() {
       department_id,
     ]);
   viewAllRoles();
+}
+async function viewAllEmployees() {
+  const [employees] = await db.promise().query("select * from employee");
+  console.table(employees);
+  showPrompts();
+}
+async function addEmployee() {
+  const { first_name, last_name, role_id, manager_id } = await inquirer.prompt([
+    {
+      type: "input",
+      name: "first_name",
+      message:
+        "Please enter the first name of the employee you would like to add",
+    },
+    {
+      type: "input",
+      name: "last_name",
+      message:
+        "Please enter the last name of the employee you would like to add",
+    },
+    {
+      type: "input",
+      name: "role_id",
+      message:
+        "Please enter the role id for the employee you would like to add.",
+    },
+    {
+      type: "input",
+      name: "manager_id",
+      message:
+        "Please enter the manager id for the employee you would like to add.",
+    },
+  ]);
+
+  await db
+    .promise()
+    .query(
+      "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
+      [first_name, last_name, role_id, manager_id]
+    );
+  viewAllEmployees();
 }
